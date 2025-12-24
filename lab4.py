@@ -4,59 +4,53 @@ START_SCORE = 10
 CAP = 9
 
 items = [
-    ('r (rifle)',3,25,25),
+    ('r',3,25,25),
     ('p',2,15,15),
-    ('a (ammo)',2,15,15),
-    ('m (medkit)',2,20,20),
-    ('i (inhaler)',1,5,5),
-    ('k (knife)',1,15,15),
-    ('x (axe)',3,20,20),
-    ('t (talisman)',1,25,25),
-    ('f (flask)',1,15,15),
-    ('d (antidot)',1,10,10),
-    ('s (supplies)',2,20,20),
-    ('c (crossbow)',2,20,20)
+    ('a',2,15,15),
+    ('m',2,20,20),
+    ('i',1,5,5),
+    ('k',1,15,15),
+    ('x',3,20,20),
+    ('t',1,25,25),
+    ('f',1,15,15),
+    ('d',1,10,10),
+    ('s',2,20,20),
+    ('c',2,20,20)
 
 ]
 
-
-def combinate(combo):
-    points = START_SCORE
-    for name, size, bonus, penalty in items:
-        if name in combo:
-            points += bonus
-        else:
-            points -= penalty
-    return points
-
-
-def total_size(combo):
-    size_sum = 0
-    for name, size, bonus, penalty in items:
-        if name in combo:
-            size_sum += size
-    return size_sum
-
-
 best_combo = None
 best_score = float("-inf")
-item_names = [item[0] for item in items]
-
 
 for i in range(len(items)):
-    for combo in combinations(item_names, i):
-        if total_size(combo) > CAP:
+    for combo in combinations(items, i):
+        size = sum(item[1] for item in combo)
+        if size > CAP:
             continue
-        score = combinate(combo)
 
-        if score > 0 and score > best_score:
-            best_score = score
+
+        points = START_SCORE
+        for item_name, weight, bonus, penalty in items:
+            if any(item[0] == item_name for item in combo):
+                points += bonus
+            else:
+                points -= penalty
+
+        if points > 0 and points > best_score:
+            best_score = points
             best_combo = combo
 
 
-print("The best combination is:")
-for item in best_combo:
-    print([item])
-print("Best score:", best_score)
-print("Amount of things:", len(best_combo))
-print(total_size(best_combo), "/", CAP, "slots filled")
+
+size = sum(item[1] for item in best_combo)
+print(f"Total: {size}/{CAP}")
+
+cells = []
+for name, size, b, p in best_combo:
+    cells.extend([name] * size)
+
+while len(cells) < CAP:
+    cells.append(' ')
+
+for i in range(3):
+    print(cells[i * 3:(i + 1) * 3])
