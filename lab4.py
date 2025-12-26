@@ -30,20 +30,16 @@ for i in range(len(items)):
 
 
         points = START_SCORE
-        for item_name, weight, bonus, penalty in items:
-            if any(item[0] == item_name for item in combo):
+        for name, weight, bonus, penalty in items:
+            if any(item[0] == name for item in combo):
                 points += bonus
             else:
                 points -= penalty
 
-        if points > 0 and points > best_score:
+        if points > best_score:
             best_score = points
             best_combo = combo
 
-
-
-size = sum(item[1] for item in best_combo)
-print(f"Total: {size}/{CAP}")
 
 cells = []
 for name, size, b, p in best_combo:
